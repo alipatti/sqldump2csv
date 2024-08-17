@@ -1,5 +1,5 @@
 [package]
-name = "sql-insert-parser"
+name = "sqldump2csv"
 version = "0.1.0"
 edition = "2021"
 
