@@ -1,0 +1,19 @@
+insert_statement = _{
+    "INSERT INTO" ~ table_name ~ "VALUES" ~ rows ~ ";" ~ EOI
+}
+
+table_name = _{ "`"? ~ ASCII_ALPHANUMERIC+ ~ "`"? }
+rows       = _{ row ~ ("," ~ row)* }
+
+row   =  { "(" ~ value ~ ("," ~ value)* ~ ")" }
+value = _{ number | string | null }
+
+number = @{ "-"? ~ ASCII_DIGIT+ ~ "."? ~ ASCII_DIGIT* }
+string = @{ "'" ~ string_char* ~ "'" }
+null   =  { "NULL" }
+
+string_char   = { !"'" ~ (quoted_char | unquoted_char) }
+unquoted_char = { ANY }
+quoted_char   = { "\\" ~ ANY }
+
+WHITESPACE = _{ " " }
