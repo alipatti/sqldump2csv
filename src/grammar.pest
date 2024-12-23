@@ -6,9 +6,10 @@ table_name = _{ "`"? ~ ASCII_ALPHANUMERIC+ ~ "`"? }
 rows       = _{ row ~ ("," ~ row)* }
 
 row   =  { "(" ~ value ~ ("," ~ value)* ~ ")" }
-value = _{ number | string | null }
+value = _{ float | integer | string | null }
 
-number = @{ "-"? ~ ASCII_DIGIT+ ~ "."? ~ ASCII_DIGIT* }
+integer = @{ "-"? ~ ASCII_DIGIT+ }
+float = @{ "-"? ~ ASCII_DIGIT* ~ "." ~ ASCII_DIGIT+ }
 string = @{ "'" ~ string_char* ~ "'" }
 null   =  { "NULL" }
 

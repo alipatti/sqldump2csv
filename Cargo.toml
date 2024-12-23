@@ -4,7 +4,14 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+appendix = "0.2.2"
+clap = { version = "4.5.16", features = ["derive"] }
 csv = "1.3.0"
+deepsize = "0.2.0"
+flate2 = "1.0.31"
+indicatif = { version = "0.17.8", features = ["rayon"] }
+itertools = "0.13.0"
 pest = "2.7.11"
 pest_derive = "2.7.11"
+rayon = "1.10.0"
 snailquote = "0.3.1"
