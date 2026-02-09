@@ -41,7 +41,7 @@ struct CommandLineArgs {
 /// e.g. `INSERT INTO xxxx VALUES (...), (...), ....;`
 fn parse_insert_statement(line: &str) -> Vec<DatabaseRow> {
     use pest::Parser;
-    let pairs = SQLParser::parse(Rule::insert_statement, &line)
+    let pairs = SQLParser::parse(Rule::insert_statement, line)
         .map_err(|e| {
             std::fs::write("line.log", e.line()).unwrap();
 
