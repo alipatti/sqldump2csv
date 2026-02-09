@@ -1,9 +1,7 @@
-use std::collections::HashMap;
 use std::io::{BufReader, Read};
 use std::{error::Error, fs, io::BufRead};
 
 use clap::Parser;
-use deepsize::DeepSizeOf;
 use indicatif::ParallelProgressIterator;
 use itertools::Itertools;
 use pest::iterators::Pair;
@@ -127,61 +125,10 @@ fn main() -> Result<()> {
     let input_stream = get_input_stream(&args)?;
     let n = args.n_rows.unwrap_or(usize::MAX);
 
-    let pagelinks = create_pagelink_id_mapping(
-        multithread_db_rows(input_stream).take_any(n),
-    )?;
-
-    println!("{}", pagelinks.capacity());
-    println!("{}", pagelinks.deep_size_of());
-
-    // multithread_db_rows(input_stream)
-    //     .progress_count(n as u64)
-    //     .take_any(n)
-    //     .for_each(|row| println!("{:?}", row));
+    multithread_db_rows(input_stream)
+        .progress_count(n as u64)
+        .take_any(n)
+        .for_each(|row| println!("{:?}", row));
 
     Ok(())
-}
-
-// ----------------
-
-fn create_pagelink_id_mapping(
-    db_rows: impl ParallelIterator<Item = DatabaseRow>,
-) -> Result<HashMap<i32, i32>> {
-    use DatabaseEntry::*;
-
-    let mapping = db_rows
-        .map(|row| match row[..3] {
-            [Integer(src_id), Integer(namespace), Integer(target_id)] => {
-                (src_id, namespace, target_id)
-            }
-            _ => {
-                panic!("Malformed row {:?}", row);
-            }
-        })
-        .filter(|&(_, namespace, _)| namespace == 0)
-        .map(|(src_id, _, target_id)| (src_id, target_id))
-        .collect();
-
-    Ok(mapping)
-}
-
-fn create_page_id_mapping(
-    db_rows: impl ParallelIterator<Item = DatabaseRow>,
-) -> Result<HashMap<i32, i32>> {
-    use DatabaseEntry::*;
-
-    let mapping = db_rows
-        .map(|row| match row[..3] {
-            [Integer(src_id), Integer(namespace), Integer(target_id)] => {
-                (src_id, namespace, target_id)
-            }
-            _ => {
-                panic!("Malformed row {:?}", row);
-            }
-        })
-        .filter(|&(_, namespace, _)| namespace == 0)
-        .map(|(src_id, _, target_id)| (src_id, target_id))
-        .collect();
-
-    Ok(mapping)
 }
